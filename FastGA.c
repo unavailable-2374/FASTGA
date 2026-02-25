@@ -3755,7 +3755,7 @@ static void *search_seeds(void *args)
   pair->gdb2 = gdb2;
   pair->align.aseq = New_Contig_Buffer(gdb1);
   pair->align.bseq = New_Contig_Buffer(gdb2);
-  if (pair->align.bseq == NULL || pair->align.bseq == NULL)
+  if (pair->align.aseq == NULL || pair->align.bseq == NULL)
     Clean_Exit(1);
   pair->align.path = &(pair->ovl.path);
   if (comp)

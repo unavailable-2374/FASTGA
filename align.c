@@ -7030,8 +7030,13 @@ int Gap_Improver(Alignment *aln, Work_Data *ework)
 #endif
 
       if (Fpos < 0)
-        { Fpos = -Fpos;
+        { int sFpos, sLpos, ext;
+
+          Fpos = -Fpos;
           Lpos = -Lpos;
+
+          sFpos = Fpos;
+          sLpos = Lpos;
 
           if (x < Diag)
             p = 0;
@@ -7069,6 +7074,19 @@ int Gap_Improver(Alignment *aln, Work_Data *ework)
 #ifdef BOX_STATS
               BxExtend += 1;
 #endif
+            }
+
+          ext = (sFpos - Fpos) + (Lpos - sLpos);
+          if (ext > 0)
+            { Hamm += ext;
+              p = Diag*(Gaps+Hamm+2)*sizeof(int);
+              if (p > work->vecmax)
+                { if (enlarge_vector(work,p))
+                    return (1);
+                }
+              F = (int *) work->vector;
+              G = F + Diag;
+              H = G + Diag;
             }
 
           f = F;
@@ -7186,7 +7204,12 @@ int Gap_Improver(Alignment *aln, Work_Data *ework)
             }
         }
       else
-        { if (x < Diag)
+        { int sFpos, sLpos, ext;
+
+          sFpos = Fpos;
+          sLpos = Lpos;
+
+          if (x < Diag)
             p = 0;
           else
             { m = t[x-Diag];
@@ -7224,6 +7247,19 @@ int Gap_Improver(Alignment *aln, Work_Data *ework)
 #endif
             }
 
+          ext = (sFpos - Fpos) + (Lpos - sLpos);
+          if (ext > 0)
+            { Hamm += ext;
+              p = Diag*(Gaps+Hamm+2)*sizeof(int);
+              if (p > work->vecmax)
+                { if (enlarge_vector(work,p))
+                    return (1);
+                }
+              F = (int *) work->vector;
+              G = F + Diag;
+              H = G + Diag;
+            }
+
           f = F;
           *f++ = p = Fpos + snake(A+(Fpos+Fdag),B+Fpos);
           for (m = Fdag+1; m <= d; m++)
@@ -7249,7 +7285,7 @@ int Gap_Improver(Alignment *aln, Work_Data *ework)
               u = 0x7fffffff;
               f = F;
               g = G;
-              for (m = Fdag; m <= d; m++) 
+              for (m = Fdag; m <= d; m++)
                 { n = *f;
                   if (n >= b)
                     { p = n+1;
